@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Facebook Login</title>
+</head>
+<body>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '176641256078118',
+          xfbml      : true,
+          version    : 'v2.7'
+        });
+      };
+
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/en_US/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+    </script>
+
+    {% if messages %}
+    <h1>Messages</h1>
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if user.is_authenticated %}
+        <div class="authenticated">
+            <p>Authenticated user: {{ user.get_full_name }}</p>
+            <ul>
+                <li>Actions:</li>
+                <li><a href=" {% url 'logout' %}?next=/">Logout</a></li>
+            </ul>
+        </div>
+
+    <div class="photos">
+        <ul>
+            {% for photo in facebook_photos.data %}
+            <li><img src="{{ photo.images.7.source }}" alt="{{ user.get_full_name }}" width="200"></li>
+            <!-- context['facebook_photos']['data'][0]['images'][7]['source'] -->
+            {% endfor %}
+        </ul>
+    </div>
+    {% else %}
+        <div class="login">
+            <a href="{% url 'social:begin' 'facebook' %}">Login</a>
+        </div>
+    {% endif %}
+
+</body>
+</html>
